@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { ILoginSuccess } from './action';
 import { types } from './types';
 
 interface IInitial {
@@ -27,7 +28,9 @@ const authentication = (state = initialState, action: any) => {
             });
         case types.LOGIN_SUCCESS:
             return produce(state, draftState => {
-                draftState.token = payload;
+                const { access, rfresh } = payload as ILoginSuccess;
+                draftState.token = access;
+                draftState.refreshToken = rfresh;
                 draftState.loginError = null;
                 draftState.logginIn = false;
             });

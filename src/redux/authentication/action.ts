@@ -7,7 +7,8 @@ export interface ILoginPayload {
 }
 
 export interface ILoginSuccess {
-    token: string;
+    access: string;
+    rfresh: string;
 }
 
 export const login = createAction<ILoginPayload>(types.LOGIN);

@@ -16,6 +16,9 @@ axiosRetry(axios, {
     },
 });
 
+const METHODS_WITH_BODY = ['POST', 'PATCH', 'DELETE'];
+
+
 const fetchWithTimeout = (url: string, requestInfo: any): any =>
     axios({
         method: requestInfo.method,
@@ -52,6 +55,15 @@ export const api = (url: string, method: string, request: any, retryCount: numbe
             retries: retryCount,
         },
     };
+
+    if (METHODS_WITH_BODY.includes(method) && request) {
+        // request.body = JSON.stringify(request);
+        requestInfo.body = JSON.stringify(request) || {};
+    }
+
+    if (METHODS_WITH_BODY.includes(method) && request.params) {
+        requestInfo.params = JSON.stringify(request.params);
+    }
 
     if (__DEV__) {
         console.log('API URL', url);

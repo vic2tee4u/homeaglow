@@ -6,11 +6,10 @@ import { types } from './types';
 import { Action } from 'redux';
 
 /** Workers */
-function* login(payload: ILoginPayload): any {
-    console.log(payload)
+function* login(action: any): any {
+    const { payload }: { payload: ILoginPayload } = action;
     try {
         const response = yield call(api, LOGIN_URL, 'POST', payload, 2, 2000);
-        console.log(response);
         yield put(loginSuccess(response));
     } catch (error) {
         yield put(loginFail(error));

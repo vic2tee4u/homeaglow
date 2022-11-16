@@ -19,6 +19,7 @@ const CustomTextInput = ({ onChangeText, value, placeholder, style, secureTextEn
                 onChangeText={onChangeText}
                 placeholder={placeholder}
                 secureTextEntry={secureTextEntry}
+                autoCapitalize="none"
             />
         </View>
     );
