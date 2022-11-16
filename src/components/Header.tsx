@@ -1,17 +1,21 @@
 import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { hamburgerIcon } from '../assets';
+import { back, hamburgerIcon } from '../assets';
 
 interface IHeader {
     onHeaderPress: () => void;
+    onBackActive?: boolean;
+    onBackPress: () => void;
 }
 
-const Header = ({ onHeaderPress }: IHeader) => {
+const Header = ({ onHeaderPress, onBackActive, onBackPress }: IHeader) => {
+    const icon = onBackActive ? back : hamburgerIcon;
+    const onPressAction = onBackActive ? onBackPress : onHeaderPress;
     return (
-        <TouchableOpacity onPress={onHeaderPress}>
+        <TouchableOpacity onPress={onPressAction}>
             <View style={styles.container}>
-                <Image source={hamburgerIcon} style={styles.img} resizeMode="contain" />
-                <Text style={styles.text}>Homeaglow</Text>
+                <Image source={icon} style={styles.img} resizeMode="contain" />
+                {!onBackActive && <Text style={styles.text}>Homeaglow</Text>}
             </View>
         </TouchableOpacity>
     );

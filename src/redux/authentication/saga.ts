@@ -1,6 +1,6 @@
 import { call, all, put, takeLatest } from 'redux-saga/effects';
 import { api } from '../../config/api';
-import { LOGIN_URL, USER_DETAILS_URL, CONVERSATION_LIST_URL } from '../../config/url';
+import { LOGIN_URL, USER_DETAILS_URL, CONVERSATION_LIST_URL, CONVERSATION_DETAILS_URL } from '../../config/url';
 import {
     loginSuccess,
     loginFail,
@@ -11,6 +11,9 @@ import {
     getRoomMessages,
     getRoomMessagesSuccess,
     getRoomMessagesFail,
+    IGetRoomDetails,
+    getUserMessagesSuccess,
+    getUserMessagesFail,
 } from '../authentication/action';
 import { types } from './types';
 import { Action } from 'redux';
@@ -46,6 +49,16 @@ function* getRoomList(): any {
     }
 }
 
+function* getConversationDetails({ payload }: { payload: IGetRoomDetails }): any {
+    const request = `${CONVERSATION_DETAILS_URL}${payload.id}/`;
+    try {
+        const response = yield call(api, request, 'GET', {}, 2, 2000);
+        yield put(getUserMessagesSuccess(response.messages));
+    } catch (error) {
+        yield put(getUserMessagesFail(error));
+    }
+}
+
 /** Watchers */
 interface TaskAction extends Action, ILoginPayload {
     payload: any;
@@ -63,6 +76,10 @@ function* getRoomListWatcher() {
     yield takeLatest(types.GET_ROOM_MESSAGES, getRoomList);
 }
 
+function* getConversationDetailsWatcher() {
+    yield takeLatest(types.GET_USER_MESSAGES, getConversationDetails);
+}
+
 export default function* authenticationSaga() {
-    yield all([loginWatcher(), getUserDetailsWatcher(), getRoomListWatcher()]);
+    yield all([loginWatcher(), getUserDetailsWatcher(), getRoomListWatcher(), getConversationDetailsWatcher()]);
 }

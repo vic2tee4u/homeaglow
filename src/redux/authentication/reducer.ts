@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { parseMessages } from '../../utility';
 import { ILoginSuccess } from './action';
 import { types } from './types';
 
@@ -87,7 +88,7 @@ const authentication = (state = initialState, action: any) => {
             });
         case types.GET_USER_MESSAGES_SUCCESS:
             return produce(state, draftState => {
-                draftState.selectedRoomMessages = payload;
+                draftState.selectedRoomMessages = parseMessages(payload);
                 draftState.fetchingRoomMessages = false;
             });
         case types.GET_USER_MESSAGES_FAIL:

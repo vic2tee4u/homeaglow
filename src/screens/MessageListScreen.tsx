@@ -1,17 +1,26 @@
-import { ListRenderItem, FlatList, View, StyleSheet, Text } from 'react-native';
-import React from 'react';
-import { IRoom, IRoomDetails, MessageCard } from '../components/MessageCard';
-import { roomList } from '../data/mockData';
+import { ListRenderItem, FlatList, View, StyleSheet, Text, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { IRoom, MessageCard } from '../components/MessageCard';
 import { Header } from '../components/Header';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/root-reducer';
+import { getUserMessages } from '../redux/authentication/action';
+import { MessageDetails } from './MessageDetails';
 
 interface IMessageCard {
     onHeaderPress: () => void;
 }
 
 const MessageListScreen = ({ onHeaderPress }: IMessageCard) => {
-    const { rooms } = useSelector((state: RootState) => state.authentication);;
+    const [roomSelected, setRoomSelected] = useState(false);
+    const { rooms } = useSelector((state: RootState) => state.authentication);
+    const dispatch = useDispatch();
+
+    const handleRoomSelection = (id: number) => {
+        dispatch(getUserMessages({ id }));
+        setRoomSelected(!roomSelected);
+    };
+
     const renderMessages: ListRenderItem<IRoom> = ({ item }) => (
         <MessageCard
             id={item.id}
@@ -20,7 +29,7 @@ const MessageListScreen = ({ onHeaderPress }: IMessageCard) => {
             isActive={item.isActive}
             message={item.message}
             messageDateTime={item.messageDateTime}
-            onMessagePress={() => {}}
+            onMessagePress={handleRoomSelection}
         />
     );
 
@@ -38,13 +47,19 @@ const MessageListScreen = ({ onHeaderPress }: IMessageCard) => {
             }}
         />
     );
+
+    const renderChatScreen = <MessageDetails />;
     return (
-        <View>
+        <SafeAreaView>
             <View style={styles.headerHolder}>
-                <Header onHeaderPress={onHeaderPress} />
+                <Header
+                    onHeaderPress={onHeaderPress}
+                    onBackActive={roomSelected}
+                    onBackPress={() => setRoomSelected(!roomSelected)}
+                />
             </View>
-            {renderer}
-        </View>
+            {roomSelected ? renderChatScreen : renderer}
+        </SafeAreaView>
     );
 };
 
