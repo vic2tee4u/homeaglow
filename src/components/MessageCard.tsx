@@ -1,6 +1,7 @@
 import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import moment from 'moment';
+import { man, woman } from '../assets';
 
 export type User = {
     username: string;
@@ -15,27 +16,33 @@ export type Message = {
     messageId: string;
 };
 
-export interface IRoomDetails {
-    roomId: string;
-    receiver: User;
-    sender: User;
-    messages: Array<Message>;
-    currentUserId?: string;
-    onMessagePress?: (messages: Array<Message>) => void;
+export interface IRoom {
+    id: number;
+    firstName: string;
+    isActive: boolean;
+    message: string;
+    lastName: string;
+    messageDateTime: string;
+    onMessagePress: (roomId: number) => void;
 }
 
-const MessageCard = ({ receiver, sender, messages, currentUserId, onMessagePress }: IRoomDetails) => {
-    const isUserSenderOrReceiver = sender.userId === currentUserId ? receiver : sender;
+const MessageCard = ({ id, firstName, lastName, message, messageDateTime, onMessagePress }: IRoom) => {
+    const numberGenerator = Math.floor(Math.random() * 2);
+    const isManOrWoman = numberGenerator === 2 ? man : woman;
     return (
-        <TouchableOpacity onPress={() => onMessagePress && onMessagePress(messages)}>
+        <TouchableOpacity onPress={() => onMessagePress && onMessagePress(id)}>
             <View style={styles.container}>
-                <Image source={{ uri: isUserSenderOrReceiver.profilePicture }} style={styles.img} />
+                <Image source={isManOrWoman} style={styles.img} />
                 <View style={styles.header}>
                     <View style={styles.msgHeader}>
-                        <Text style={styles.name}>{isUserSenderOrReceiver.username}</Text>
-                        <Text>{moment(messages[0].dateSent).format('MMM. D')}</Text>
+                        <Text style={styles.name}>
+                            {firstName.split('_')[0]} {lastName}
+                        </Text>
+                        <Text>{moment(messageDateTime).format('MMM. D')}</Text>
                     </View>
-                    <Text style={styles.sub}>{messages[0].text}</Text>
+                    <Text numberOfLines={3} ellipsizeMode="tail" style={styles.sub}>
+                        {message}
+                    </Text>
                 </View>
             </View>
         </TouchableOpacity>

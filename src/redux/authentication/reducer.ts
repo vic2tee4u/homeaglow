@@ -8,6 +8,14 @@ interface IInitial {
     loginError: any;
     logginIn: boolean;
     userDetails: any;
+    gettingUserDetails: boolean;
+    rooms: Array<any>;
+    gettingRooms: boolean;
+    selectedRoomMessages: Array<any>;
+    fetchingRoomMessages: boolean;
+    sendingMessage: boolean;
+    /** Will catch any error that is not typed */
+    genericErrors: any;
 }
 
 const initialState: IInitial = {
@@ -16,6 +24,13 @@ const initialState: IInitial = {
     logginIn: false,
     loginError: null,
     userDetails: null,
+    gettingUserDetails: false,
+    rooms: [],
+    selectedRoomMessages: [],
+    gettingRooms: false,
+    fetchingRoomMessages: false,
+    sendingMessage: false,
+    genericErrors: null,
 };
 
 const authentication = (state = initialState, action: any) => {
@@ -39,9 +54,50 @@ const authentication = (state = initialState, action: any) => {
                 draftState.loginError = payload;
                 draftState.logginIn = false;
             });
+        case types.GET_USER_DETAILS:
+            return produce(state, draftState => {
+                draftState.gettingUserDetails = true;
+            });
+        case types.GET_USER_DETAILS_SUCCESS:
+            return produce(state, draftState => {
+                draftState.userDetails = payload;
+                draftState.gettingUserDetails = false;
+            });
+        case types.GET_USER_DETAILS_FAIL:
+            return produce(state, draftState => {
+                draftState.gettingUserDetails = false;
+            });
+        case types.GET_ROOM_MESSAGES:
+            return produce(state, draftState => {
+                draftState.gettingRooms = true;
+            });
+        case types.GET_ROOM_MESSAGES_SUCCESS:
+            return produce(state, draftState => {
+                draftState.rooms = payload;
+                draftState.gettingRooms = false;
+            });
+        case types.GET_ROOM_MESSAGES_FAIL:
+            return produce(state, draftState => {
+                draftState.gettingRooms = false;
+                draftState.genericErrors = payload;
+            });
+        case types.GET_USER_MESSAGES:
+            return produce(state, draftState => {
+                draftState.fetchingRoomMessages = true;
+            });
+        case types.GET_USER_MESSAGES_SUCCESS:
+            return produce(state, draftState => {
+                draftState.selectedRoomMessages = payload;
+                draftState.fetchingRoomMessages = false;
+            });
+        case types.GET_USER_MESSAGES_FAIL:
+            return produce(state, draftState => {
+                draftState.fetchingRoomMessages = false;
+                draftState.genericErrors = payload;
+            });
         default:
             return state;
     }
 };
 
-export { authentication }
+export { authentication };
