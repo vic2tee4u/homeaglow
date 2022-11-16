@@ -1,0 +1,1 @@
+export const hamburgerIcon = require('./more.png');
